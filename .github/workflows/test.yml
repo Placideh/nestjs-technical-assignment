@@ -1,0 +1,55 @@
+name: Run Tests
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+env:
+  NODE_ENV: test
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [20.x]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run E2E tests with coverage
+        run: npm run test:cov
+        env:
+          DB_TYPE: sqlite
+          DB_DATABASE: ':memory:'
+          JWT_SECRET: test-jwt-secret-key-for-ci
+          JWT_EXPIRATION: 1h
+          JWT_REFRESH_SECRET: test-jwt-refresh-secret
+          JWT_REFRESH_EXPIRATION: 7d
+          MAIL_HOST: localhost
+          MAIL_PORT: 1025
+          MAIL_USER: test
+          MAIL_PASSWORD: test
+          MAIL_FROM: noreply@test.com
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        if: success()
+        with:
+          files: ./coverage/lcov.info
+          flags: e2e
+          name: e2e-tests
+          fail_ci_if_error: false

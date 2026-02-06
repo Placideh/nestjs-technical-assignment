@@ -1,0 +1,44 @@
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: attendance_db
+    environment:
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_DB}
+    networks:
+      - attendance-svc-network
+    ports:
+      - 3306:3306
+    restart: always
+
+  app:
+    container_name: attendance_svc_api
+    build: .
+    depends_on:
+      - mysql-db
+    volumes:
+      - attendance-data:/var/lib/postgresql/data
+    networks:
+      - attendance-svc-network
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_HOST: attendance_db
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_DB: ${DATABASE_DB}
+      NODE_PORT: ${NODE_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+      
+    restart: always
+
+volumes: 
+  attendance-data: {}
+networks:
+  attendance-svc-network:
+    driver: bridge
+   
