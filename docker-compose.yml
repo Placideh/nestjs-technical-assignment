@@ -19,7 +19,7 @@ services:
     depends_on:
       - mysql-db
     volumes:
-      - attendance-data:/var/lib/postgresql/data
+      - attendance-data:/var/lib/mysql
     networks:
       - attendance-svc-network
     ports:
