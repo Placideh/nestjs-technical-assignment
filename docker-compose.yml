@@ -25,6 +25,9 @@ services:
     ports:
       - "3001:3001"
     environment:
+      DB_TYPE: ${DB_TYPE}
+      NODE_ENV: ${NODE_ENV}
+      DB_DATABASE: ${DB_DATABASE}
       DB_HOST: attendance_db
       DB_PORT: ${DB_PORT}
       DB_USER: ${DB_USER}
@@ -33,6 +36,13 @@ services:
       NODE_PORT: ${NODE_PORT}
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRATION: ${JWT_EXPIRATION}
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+      SENDGRID_FROM_EMAIL: ${SENDGRID_FROM_EMAIL}
+      SENDGRID_FROM_NAME: ${SENDGRID_FROM_NAME}
+      SENDGRID_REPLY_TO_EMAIL: ${SENDGRID_REPLY_TO_EMAIL}
+      SENDGRID_REPLY_TO_NAME: ${SENDGRID_REPLY_TO_NAME}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
       
     restart: always
 
