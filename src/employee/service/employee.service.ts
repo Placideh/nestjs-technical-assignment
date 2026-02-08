@@ -24,18 +24,13 @@ import {
         where: { email: employeeDto.email },
       });
   
-      if (existingEmployee) {
-        throw new ConflictException('Email already exists');
+      if (!existingEmployee) {
+        throw new ConflictException(`Email: ${employeeDto.email} provided already exists`);
       }
   
-      // Check if employeeId already exists if provided
-      if (employeeDto.employeeId) {
-        const existingId = await this.employeeRepository.findOne({
-          where: { employeeId: employeeDto.employeeId },
-        });
-        if (existingId) {
-          throw new ConflictException('Employee ID already exists');
-        }
+      // check if employeeId already exists if provided
+      if (employeeDto.employeeId === existingEmployee.employeeId) {
+          throw new ConflictException(`Employee with ID : ${employeeDto.employeeId} already exists`);
       }
   
       // Hash password with bcrypt
@@ -82,17 +77,17 @@ import {
   
     
     async findById(id: string): Promise<Employee> {
-      const employee = await this.employeeRepository.findOne({
+      const existingEmployee = await this.employeeRepository.findOne({
         where: { id },
         relations: ['attendances'],
         select: ['id', 'email', 'password', 'names', 'employeeId', 'phoneNumber']
       });
   
-      if (!employee) {
-        throw new NotFoundException(`Employee with ID ${id} not found`);
+      if (!existingEmployee) {
+        throw new NotFoundException(`Employee with ID ${id} Not found`);
       }
   
-      return employee;
+      return existingEmployee;
     }
   
 
@@ -102,7 +97,7 @@ import {
         where: { email },
         select: ['id', 'email', 'password', 'names', 'employeeId', 'phoneNumber'],
       });
-      if(!existingEmployee) throw new NotFoundException(`Employee with email: ${email} not found`);
+      if(!existingEmployee) throw new NotFoundException(`Employee with email: ${email} Not found`);
       return existingEmployee;
     }
   
@@ -113,7 +108,7 @@ import {
         select: ['id', 'email', 'password', 'names', 'employeeId', 'phoneNumber']
       });
 
-      if(!existingEmployee) throw new NotFoundException(`Employee with id: ${employeeId} not found`);
+      if(!existingEmployee) throw new NotFoundException(`Employee with id: ${employeeId} Not found`);
       return existingEmployee;
 
     }
@@ -122,9 +117,10 @@ import {
     async update(id: string,updateEmployeeDto: EmployeeDto, ): Promise<Employee> {
 
       const existingEmployee = await this.employeeRepository.findOne({where:{id}});
-      if(!existingEmployee)  throw new NotFoundException(`Employee with id: ${id} not found`);
+
+      if(!existingEmployee)  throw new NotFoundException(`Employee with id: ${id} Not found`);
   
-      // Check if email is being changed and if it already exists
+      // check if email is being changed and if it already exists
       if (
         updateEmployeeDto.email &&
         updateEmployeeDto.email !== existingEmployee.email
@@ -133,11 +129,11 @@ import {
           where: { email: updateEmployeeDto.email, id: Not(id) },
         });
         if (emailExists) {
-          throw new ConflictException('Email already exists');
+          throw new ConflictException(`Email Provided : ${updateEmployeeDto.email} is already exists`);
         }
       }
   
-      // Check if employeeId is being changed and if it already exists
+      // check if employeeId is being changed and if it already exists
       if (
         updateEmployeeDto.employeeId &&
         updateEmployeeDto.employeeId !== existingEmployee.employeeId
@@ -146,11 +142,10 @@ import {
           where: { employeeId: updateEmployeeDto.employeeId, id: Not(id) },
         });
         if (employeeIdExists) {
-          throw new ConflictException('Employee ID already exists');
+          throw new ConflictException(`Employee ID provided: ${updateEmployeeDto.employeeId} already exists`);
         }
       }
   
-      // Hash password if it's being updated
       if (updateEmployeeDto.password) {
         updateEmployeeDto.password = await bcrypt.hash(updateEmployeeDto.password, 10);
       }
@@ -160,15 +155,11 @@ import {
     }
   
    
-  
-    /**
-     * Set reset token for password reset
-     */
     async setResetToken(email: string, token: string, expiry: Date): Promise<void> {
       const employee = await this.findByEmail(email);
       
       if (!employee) {
-        throw new NotFoundException(`Employee with email ${email} not found`);
+        throw new NotFoundException(`Employee with email ${email} Not found`);
       }
   
       employee.resetToken = token;
@@ -181,7 +172,7 @@ import {
       const employee = await this.employeeRepository.findOne({
         where: {
           resetToken: token,
-          resetTokenExpiry: new Date(), // This will check if expiry > current date
+          resetTokenExpiry: new Date(), 
         },
       });
   

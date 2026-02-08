@@ -6,7 +6,6 @@ import {
     HttpStatus,
     UnauthorizedException,
     ConflictException,
-    BadRequestException,
     InternalServerErrorException,
     Get,
     UseGuards,
@@ -79,10 +78,8 @@ import {
       try {
         return await this.authService.resetPassword(resetPasswordDto);
       } catch (error) {
-        if (error.message === 'INVALID_OR_EXPIRED_TOKEN') {
-          throw new BadRequestException('Invalid or expired reset token');
-        }
-        throw new InternalServerErrorException('Failed to reset password');
+        console.log(`Server error: ${error}`);
+        throw new InternalServerErrorException(`Something went wrong...please again`);
       }
     }
   
@@ -94,13 +91,10 @@ import {
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     async getProfile(@Request() req) {
       try {
-        const employee = await this.authService.validateEmployee(req.user.id);
-        if (!employee) {
-          throw new UnauthorizedException('Employee not found');
-        }
-        return employee;
+        return await this.authService.validateEmployee(req.user.id);
       } catch (error) {
-        throw new UnauthorizedException('Failed to get profile');
+        console.log(`Server error: ${error}`);
+        throw new InternalServerErrorException(`Something went wrong...please again`);
       }
     }
   
@@ -111,7 +105,6 @@ import {
     @ApiOperation({ summary: 'Logout employee (client-side token deletion)' })
     @ApiResponse({ status: 200, description: 'Logout successful' })
     async logout() {
-      // JWT is stateless, so logout is handled client-side by deleting token
       return { message: 'Logout successful. Please delete your access token.' };
     }
   }

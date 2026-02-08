@@ -1,8 +1,8 @@
 
 export const ATTENDANCE_CONSTANTS = {
-    ARRIVAL_TIME: '09:00', // Expected arrival time (9:00 AM)
-    DEPARTURE_TIME: '17:00', // Expected departure time (5:00 PM)
-    STANDARD_WORK_HOURS: 8, // Standard working hours
+    ARRIVAL_TIME: '09:00', 
+    DEPARTURE_TIME: '17:00', 
+    STANDARD_WORK_HOURS: 8, 
   } as const;
   
   // Attendance status enum

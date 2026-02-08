@@ -5,17 +5,11 @@ import {
     Body,
     Patch,
     Param,
-    Delete,
-    Query,
     HttpCode,
     HttpStatus,
-    UsePipes,
-    ValidationPipe,
     ParseUUIDPipe,
-    DefaultValuePipe,
-    ParseIntPipe,
-    BadRequestException,
     UseGuards,
+    InternalServerErrorException,
 } from '@nestjs/common';
 import {
     ApiTags, ApiBody,
@@ -26,7 +20,6 @@ import {
     ApiOkResponse,
     ApiNotFoundResponse,
     ApiParam,
-    ApiNoContentResponse,
     ApiBearerAuth,
 
 
@@ -55,7 +48,13 @@ export class EmployeeController {
     @ApiConflictResponse({ description: 'Email or Employee ID already exists' })
     @ApiBody({ type: EmployeeDto })
     async register(@Body() employeeDto: EmployeeDto): Promise<Employee> {
-        return await this.employeeService.register(employeeDto);
+        try {
+            return await this.employeeService.register(employeeDto);
+        } catch (error) {
+            console.log(`Server error: ${error}`);
+            throw new InternalServerErrorException(`Something went wrong...please again`);
+        }
+
     }
 
 
@@ -75,7 +74,13 @@ export class EmployeeController {
         example: '123e4567-e89b-12d3-a456-426614174000',
     })
     async findById(@Param('id', ParseUUIDPipe) id: string): Promise<Employee> {
-        return await this.employeeService.findById(id);
+        try {
+            return await this.employeeService.findById(id);
+
+        } catch (error) {
+            console.log(`Server error: ${error}`);
+            throw new InternalServerErrorException(`Something went wrong...please again`);
+        }
     }
 
 
@@ -92,10 +97,15 @@ export class EmployeeController {
         name: 'email',
         type: String,
         description: 'Employee email address',
-        example: 'jumpamn@gmail.com',
+        example: 'jumpamn@me.com',
     })
     async findByEmail(@Param('email') email: string): Promise<Employee> {
-        return await this.employeeService.findByEmail(email);
+        try {
+            return await this.employeeService.findByEmail(email);
+        } catch (error) {
+            console.log(`Server error: ${error}`);
+            throw new InternalServerErrorException(`Something went wrong...please again`);
+        }
     }
 
     @Get('employeeId/:employeeId')
@@ -115,7 +125,12 @@ export class EmployeeController {
     async findByEmployeeId(
         @Param('employeeId') employeeId: string,
     ): Promise<Employee> {
-        return await this.employeeService.findByEmployeeId(employeeId);
+        try {
+            return await this.employeeService.findByEmployeeId(employeeId);
+        } catch (error) {
+            console.log(`Server error: ${error}`);
+            throw new InternalServerErrorException(`Something went wrong...please again`);
+        }
     }
 
     @Patch(':id')
@@ -139,27 +154,13 @@ export class EmployeeController {
         @Param('id', ParseUUIDPipe) id: string,
         @Body() updateEmployeeDto: EmployeeDto,
     ): Promise<Employee> {
-        return await this.employeeService.update(id, updateEmployeeDto);
+        try {
+            return await this.employeeService.update(id, updateEmployeeDto);
+        } catch (error) {
+            console.log(`Server error: ${error}`);
+            throw new InternalServerErrorException(`Something went wrong...please again`);
+            
+        }
     }
-
-    @Delete(':id')
-    @HttpCode(HttpStatus.NO_CONTENT)
-    @ApiOperation({ summary: 'Delete employee' })
-    @ApiNoContentResponse({ description: 'Employee deleted successfully' })
-    @ApiNotFoundResponse({ description: 'Employee not found' })
-    @ApiBadRequestResponse({ description: 'Invalid UUID format' })
-    @ApiParam({
-        name: 'id',
-        type: String,
-        description: 'Employee UUID',
-        example: '123e4567-e89b-12d3-a456-426614174000',
-    })
-    async delete(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
-        // You might want to add a delete method to your service
-        // For now, let's assume you'll implement it later
-        throw new BadRequestException('Delete endpoint not implemented yet');
-    }
-
-
 
 }

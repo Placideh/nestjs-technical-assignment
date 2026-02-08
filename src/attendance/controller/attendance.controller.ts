@@ -4,7 +4,6 @@ import {
     Get,
     Body,
     Param,
-    NotFoundException,
     InternalServerErrorException,
     UseGuards,
 } from '@nestjs/common';
@@ -33,7 +32,12 @@ export class AttendanceController {
         description: 'Employee not found',
     })
     async recordAttendance(@Body() dto: AttendanceDto) {
-        return await this.attendanceService.recordAttendance(dto);
+        try {
+            return await this.attendanceService.recordAttendance(dto);
+        } catch (error) {
+            console.log(`Server error: ${error}`);
+            throw new InternalServerErrorException(`Something went wrong...please again`);
+        }
 
     }
 
@@ -44,7 +48,13 @@ export class AttendanceController {
         description: 'List of attendance records',
     })
     async getEmployeeAttendance(@Param('employeeId') employeeId: string) {
-        return await this.attendanceService.getEmployeeAttendance(employeeId);
+        try {
+            
+            return await this.attendanceService.getEmployeeAttendance(employeeId);
+        } catch (error) {
+            console.log(`Server error: ${error}`);
+            throw new InternalServerErrorException(`Something went wrong...please again`);
+        }
 
     }
 
@@ -53,6 +63,10 @@ export class AttendanceController {
     @ApiResponse({
         status: 200,
         description: "Today's attendance record",
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'Employee not found',
     })
     async getTodayAttendance(@Param('employeeId') employeeId: string) {
         try {
@@ -65,9 +79,8 @@ export class AttendanceController {
 
             return attendance;
         } catch (error) {
-            throw new InternalServerErrorException(
-                'Failed to retrieve attendance record',
-            );
+            console.log(`Server error: ${error}`);
+            throw new InternalServerErrorException(`Something went wrong...please again`);
         }
     }
 }
