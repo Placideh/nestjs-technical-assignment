@@ -15,6 +15,7 @@ import {
     DefaultValuePipe,
     ParseIntPipe,
     BadRequestException,
+    UseGuards,
 } from '@nestjs/common';
 import {
     ApiTags, ApiBody,
@@ -26,15 +27,19 @@ import {
     ApiNotFoundResponse,
     ApiParam,
     ApiNoContentResponse,
+    ApiBearerAuth,
 
 
 } from '@nestjs/swagger';
 import { EmployeeService } from "../service/employee.service";
 import { EmployeeDto } from '../dto/employee.dto';
 import { Employee } from '../entities/employee.entity';
+import { JwtAuthGuard } from '../../auth/jwtAuth.guard';
 
 
 @ApiTags("Employee endpoints")
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @Controller("employees")
 export class EmployeeController {
     constructor(private readonly employeeService: EmployeeService) { }

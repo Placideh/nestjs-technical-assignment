@@ -1,8 +1,9 @@
 import { Process, Processor } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import bull from 'bull';
-import * as sgMail from '@sendgrid/mail';
+import sgMail from '@sendgrid/mail';
 import { ConfigService } from '@nestjs/config';
+import "dotenv/config";
 
 export interface AttendanceEmailData {
   employeeEmail: string;
@@ -20,7 +21,7 @@ export class MailProcessor {
 
   constructor(private readonly configService: ConfigService) {
     // Initialize SendGrid API key
-    const apiKey = this.configService.get<string>('SENDGRID_API_KEY');
+    const apiKey = process.env.SENDGRID_API_KEY;
     sgMail.setApiKey(apiKey!);
   }
 
@@ -33,12 +34,12 @@ export class MailProcessor {
     // Build SendGrid message with template
     const msg = {
       from: {
-        name: this.configService.get<string>('SENDGRID_FROM_NAME'),
-        email: this.configService.get<string>('SENDGRID_FROM_EMAIL'),
+        name:  process.env.SENDGRID_FROM_NAME,
+        email: process.env.SENDGRID_FROM_EMAIL
       },
       reply_to: {
-        name: this.configService.get<string>('SENDGRID_REPLY_TO_NAME'),
-        email: this.configService.get<string>('SENDGRID_REPLY_TO_EMAIL'),
+        name: process.env.SENDGRID_REPLY_TO_NAME,
+        email: process.env.SENDGRID_REPLY_TO_EMAIL,
       },
       personalizations: [
         {
@@ -62,23 +63,21 @@ export class MailProcessor {
           },
         },
       ],
-      template_id: this.configService.get<string>('SENDGRID_ATTENDANCE_TEMPLATE_ID'),
+      template_id: process.env.SENDGRID_TEMPLATE_ID,
       attachments: [], // For future PDF/Excel reports
     };
 
     try {
       await this.sendNormalEmail(msg);
-      this.logger.log(`✅ Attendance email sent to ${employeeEmail}`);
+      this.logger.log(`Attendance email sent to ${employeeEmail}`);
       return { success: true };
     } catch (error) {
-      this.logger.error(`❌ Failed to send email to ${employeeEmail}`, error);
-      throw error; // Bull will retry based on job config
+      this.logger.error(`Failed to send email to ${employeeEmail}`, error);
+      throw error; 
     }
   }
 
-  /**
-   * Send email with retry logic (refactored from your original code)
-   */
+ 
   private async sendNormalEmail(data: any, retryCount: number = 0): Promise<void> {
     try {
       await sgMail.send(data);
@@ -99,9 +98,7 @@ export class MailProcessor {
     }
   }
 
-  /**
-   * Delay helper
-   */
+ 
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }

@@ -10,6 +10,6 @@ import { EmployeeController } from './controller/employee.controller';
   ],
   controllers: [EmployeeController],
   providers: [EmployeeService],
-  exports: [],
+  exports: [EmployeeService,TypeOrmModule],
 })
 export class EmployeeModule {}
