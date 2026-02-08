@@ -19,7 +19,7 @@ Once running, access the interactive Swagger documentation at:
 - ✅ Attendance tracking with clock in/out
 - ✅ PDF and Excel report generation
 - ✅ Email notifications
-- ✅ PostgreSQL database with TypeORM
+- ✅ MySQl database with TypeORM
 - ✅ Redis for queue management
 - ✅ Unit and E2E testing
 - ✅ Swagger API documentation
