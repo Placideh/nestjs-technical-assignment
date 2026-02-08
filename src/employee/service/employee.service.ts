@@ -24,13 +24,8 @@ import {
         where: { email: employeeDto.email },
       });
   
-      if (!existingEmployee) {
+      if (existingEmployee) {
         throw new ConflictException(`Email: ${employeeDto.email} provided already exists`);
-      }
-  
-      // check if employeeId already exists if provided
-      if (employeeDto.employeeId === existingEmployee.employeeId) {
-          throw new ConflictException(`Employee with ID : ${employeeDto.employeeId} already exists`);
       }
   
       // Hash password with bcrypt
@@ -111,6 +106,18 @@ import {
       if(!existingEmployee) throw new NotFoundException(`Employee with id: ${employeeId} Not found`);
       return existingEmployee;
 
+    }
+
+    async getByIdentifier(identifier: string): Promise<Employee | null> {
+        if (identifier.includes('@')) {
+            return this.employeeRepository.findOne({
+                where: { email: identifier },
+            });
+        }
+    
+        return this.employeeRepository.findOne({
+            where: { employeeId: identifier },
+        });
     }
   
   

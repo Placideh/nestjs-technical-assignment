@@ -32,12 +32,9 @@ export class AttendanceController {
         description: 'Employee not found',
     })
     async recordAttendance(@Body() dto: AttendanceDto) {
-        try {
-            return await this.attendanceService.recordAttendance(dto);
-        } catch (error) {
-            console.log(`Server error: ${error}`);
-            throw new InternalServerErrorException(`Something went wrong...please again`);
-        }
+
+        return await this.attendanceService.recordAttendance(dto);
+
 
     }
 
@@ -48,13 +45,9 @@ export class AttendanceController {
         description: 'List of attendance records',
     })
     async getEmployeeAttendance(@Param('employeeId') employeeId: string) {
-        try {
-            
-            return await this.attendanceService.getEmployeeAttendance(employeeId);
-        } catch (error) {
-            console.log(`Server error: ${error}`);
-            throw new InternalServerErrorException(`Something went wrong...please again`);
-        }
+
+        return await this.attendanceService.getEmployeeAttendance(employeeId);
+
 
     }
 

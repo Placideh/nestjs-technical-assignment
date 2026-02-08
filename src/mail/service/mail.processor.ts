@@ -9,8 +9,8 @@ export interface AttendanceEmailData {
   employeeEmail: string;
   employeeName: string;
   date: string;
-  clockIn: string;
-  clockOut: string;
+  entry: string;
+  depart: string;
   activeHours: number;
   status: string;
 }
@@ -29,7 +29,7 @@ export class MailProcessor {
   async handleAttendanceEmail(job: bull.Job<AttendanceEmailData>) {
     this.logger.log(`Processing attendance email for ${job.data.employeeEmail}`);
 
-    const { employeeEmail, employeeName, date, clockIn, clockOut, activeHours, status } = job.data;
+    const { employeeEmail, employeeName, date, entry, depart, activeHours, status } = job.data;
 
     // Build SendGrid message with template
     const msg = {
@@ -56,8 +56,8 @@ export class MailProcessor {
             name: employeeName,
             message: `Please find the generated Attendance for ${date}`,
             date: date,
-            clockIn: clockIn,
-            clockOut: clockOut,
+            clockIn: entry,
+            clockOut: depart,
             activeHours: activeHours,
             status: status,
           },

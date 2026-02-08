@@ -31,19 +31,18 @@ jobs:
       - name: Run E2E tests with coverage
         run: npm run test:cov
         env:
-          DB_TYPE: sqlite
+          DB_TYPE: ${{ secrets.DB_TYPE }}
+          NODE_ENV: ${{ secrets.NODE_ENV }}
           DB_DATABASE: ':memory:'
-          JWT_SECRET: test-jwt-secret-key-for-ci
-          JWT_EXPIRATION: 1h
-          JWT_REFRESH_SECRET: test-jwt-refresh-secret
-          JWT_REFRESH_EXPIRATION: 7d
-          MAIL_HOST: localhost
-          MAIL_PORT: 1025
-          MAIL_USER: test
-          MAIL_PASSWORD: test
-          MAIL_FROM: noreply@test.com
-          REDIS_HOST: localhost
-          REDIS_PORT: 6379
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_EXPIRATION: ${{ secrets.JWT_EXPIRATION }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          SENDGRID_FROM_EMAIL: ${{ secrets.SENDGRID_FROM_EMAIL }}
+          SENDGRID_FROM_NAME: ${{ secrets.SENDGRID_FROM_NAME }}
+          SENDGRID_REPLY_TO_EMAIL: ${{ secrets.SENDGRID_REPLY_TO_EMAIL }}
+          SENDGRID_REPLY_TO_NAME: ${{ secrets.SENDGRID_REPLY_TO_NAME }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
       
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4

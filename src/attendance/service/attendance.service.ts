@@ -12,14 +12,14 @@ import {
     AttendanceStatus,
 } from '../../config/constant';
 import { MailService } from '../../mail/service/mail.service';
+import { EmployeeService } from '../../employee/service/employee.service';
 
 @Injectable()
 export class AttendanceService {
     constructor(
         @InjectRepository(Attendance)
         private readonly attendanceRepository: Repository<Attendance>,
-        @InjectRepository(Employee)
-        private readonly employeeRepository: Repository<Employee>,
+        private readonly employeeService: EmployeeService,
         private readonly mailService: MailService,
     ) { }
 
@@ -69,8 +69,8 @@ export class AttendanceService {
                 employeeEmail: employee.email,
                 employeeName: `${employee.names}`,
                 date: attendance.date,
-                clockIn: attendance.entry.toLocaleTimeString(),
-                clockOut: attendance.depart.toLocaleTimeString(),
+                entry: attendance.entry.toLocaleTimeString(),
+                depart: attendance.depart.toLocaleTimeString(),
                 activeHours: attendance.activeHours || 0,
                 status: attendance.status,
             });
@@ -81,15 +81,8 @@ export class AttendanceService {
 
 
     private async findEmployee(identifier: string): Promise<Employee | null> {
-        if (identifier.includes('@')) {
-            return this.employeeRepository.findOne({
-                where: { email: identifier },
-            });
-        }
-    
-        return this.employeeRepository.findOne({
-            where: { employeeId: identifier },
-        });
+        console.log("Id:",identifier)
+        return this.employeeService.getByIdentifier(identifier);
     }
 
 

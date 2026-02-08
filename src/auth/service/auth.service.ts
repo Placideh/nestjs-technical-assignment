@@ -1,7 +1,6 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, MoreThan } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { Employee } from '../../employee/entities/employee.entity';
@@ -14,14 +13,21 @@ import { EmployeeService } from '../../employee/service/employee.service';
 @Injectable()
 export class AuthService {
     constructor(
-        @InjectRepository(Employee)
+        @Inject(forwardRef(() => EmployeeService))
         private readonly employeeService: EmployeeService,
         private readonly jwtService: JwtService,
     ) { }
 
 
     async register(employeeDto: RegisterDto): Promise<Employee> {
-        return await this.employeeService.register(employeeDto);
+        console.log("are saving...");
+        try{
+            return await this.employeeService.register(employeeDto);
+        }catch(error){
+            console.log("error is : ",error);
+            throw new BadRequestException();
+        }
+        
     }
 
     async login(loginDto: LoginDto) {

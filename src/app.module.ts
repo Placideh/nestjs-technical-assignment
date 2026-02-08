@@ -6,10 +6,11 @@ import { BullModule } from '@nestjs/bull';
 import { DatabaseConnectionService } from './config/db.config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailModule } from './mail/mail.module';
-import { EmployeeModule } from './employee/employee.module';
 import { AttendanceModule } from './attendance/attendace.module';
 import { AuthModule } from './auth/auth.module';
+import { EmployeeModule } from './employee/employee.module';
 import "dotenv/config";
+import { ReportsModule } from './reports/controller/reports.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import "dotenv/config";
   EmployeeModule,
   AttendanceModule,
   MailModule,
+  ReportsModule,
 
 ],
   controllers: [AppController],

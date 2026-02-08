@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,8 +11,7 @@ import { EmployeeModule } from '../employee/employee.module';
 
 @Module({
   imports: [
-    EmployeeModule,
-    TypeOrmModule.forFeature([Employee]),
+    forwardRef(() => EmployeeModule),
     PassportModule,
     JwtModule.register({
         secret: process.env.JWT_SECRET,

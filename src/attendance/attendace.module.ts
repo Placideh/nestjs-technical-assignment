@@ -16,6 +16,6 @@ import { Attendance } from "./entities/attendance.entity";
       ],
     providers:[AttendanceService],
     controllers:[AttendanceController],
-    exports:[AttendanceService, TypeOrmModule]
+    exports:[AttendanceService]
 })
 export class AttendanceModule{}

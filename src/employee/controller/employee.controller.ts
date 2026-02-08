@@ -37,27 +37,6 @@ import { JwtAuthGuard } from '../../auth/jwtAuth.guard';
 export class EmployeeController {
     constructor(private readonly employeeService: EmployeeService) { }
 
-    @Post('register')
-    @HttpCode(HttpStatus.CREATED)
-    @ApiOperation({ summary: 'Register a new employee' })
-    @ApiCreatedResponse({
-        description: 'Employee successfully registered',
-        type: EmployeeDto,
-    })
-    @ApiBadRequestResponse({ description: 'Invalid input data' })
-    @ApiConflictResponse({ description: 'Email or Employee ID already exists' })
-    @ApiBody({ type: EmployeeDto })
-    async register(@Body() employeeDto: EmployeeDto): Promise<Employee> {
-        try {
-            return await this.employeeService.register(employeeDto);
-        } catch (error) {
-            console.log(`Server error: ${error}`);
-            throw new InternalServerErrorException(`Something went wrong...please again`);
-        }
-
-    }
-
-
     @Get(':id')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Get employee by ID' })
@@ -74,13 +53,7 @@ export class EmployeeController {
         example: '123e4567-e89b-12d3-a456-426614174000',
     })
     async findById(@Param('id', ParseUUIDPipe) id: string): Promise<Employee> {
-        try {
-            return await this.employeeService.findById(id);
-
-        } catch (error) {
-            console.log(`Server error: ${error}`);
-            throw new InternalServerErrorException(`Something went wrong...please again`);
-        }
+        return await this.employeeService.findById(id);
     }
 
 
@@ -100,12 +73,7 @@ export class EmployeeController {
         example: 'jumpamn@me.com',
     })
     async findByEmail(@Param('email') email: string): Promise<Employee> {
-        try {
-            return await this.employeeService.findByEmail(email);
-        } catch (error) {
-            console.log(`Server error: ${error}`);
-            throw new InternalServerErrorException(`Something went wrong...please again`);
-        }
+        return await this.employeeService.findByEmail(email);
     }
 
     @Get('employeeId/:employeeId')
@@ -125,12 +93,8 @@ export class EmployeeController {
     async findByEmployeeId(
         @Param('employeeId') employeeId: string,
     ): Promise<Employee> {
-        try {
-            return await this.employeeService.findByEmployeeId(employeeId);
-        } catch (error) {
-            console.log(`Server error: ${error}`);
-            throw new InternalServerErrorException(`Something went wrong...please again`);
-        }
+        return await this.employeeService.findByEmployeeId(employeeId);
+
     }
 
     @Patch(':id')
@@ -154,13 +118,8 @@ export class EmployeeController {
         @Param('id', ParseUUIDPipe) id: string,
         @Body() updateEmployeeDto: EmployeeDto,
     ): Promise<Employee> {
-        try {
-            return await this.employeeService.update(id, updateEmployeeDto);
-        } catch (error) {
-            console.log(`Server error: ${error}`);
-            throw new InternalServerErrorException(`Something went wrong...please again`);
-            
-        }
+        return await this.employeeService.update(id, updateEmployeeDto);
+
     }
 
 }
