@@ -21,7 +21,7 @@ Once running, access the interactive Swagger documentation at:
 - ✅ Email notifications
 - ✅ MySQl database with TypeORM
 - ✅ Redis for queue management
-- ✅ Unit and E2E testing
+- ✅  E2E testing
 - ✅ Swagger API documentation
 
 
